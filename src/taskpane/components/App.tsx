@@ -32,8 +32,8 @@ const occupationOptions = getOccupationOptions();
 
 const transportationOptions = getTransportationOptions();
 
-function optionNames(options: {name: string}[]) {
-  return options.map(({name}) => name);
+function optionNames(options: { name: string }[]) {
+  return options.map(({ name }) => name);
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -42,14 +42,14 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = {
       //listItems: [],
       occupation: 0,
-      transportation: 0,
+      transportation: 0
     };
   }
 
   componentDidMount() {
     this.setState({
       occupation: 0,
-      transportation: 0,
+      transportation: 0
       // listItems: [
       //   {
       //     icon: "Ribbon",
@@ -108,43 +108,37 @@ export default class App extends React.Component<AppProps, AppState> {
     const transportation = transportationOptions[this.state.transportation];
 
     console.log(occupation);
-    console.log(transportation)
-
+    console.log(transportation);
 
     // <List message="Excel Life - Explore your options!" items={this.state.listItems}>
     // <Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" /><Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" />
     return (
       <div>
-        
-          <p>Occupation</p>
-          <Select 
-          id="occupation-options" 
+        <p>Occupation</p>
+        <Select
+          id="occupation-options"
           options={optionNames(occupationOptions)}
           onChange={(index: number) => {
-            this.setState({occupation:index});
+            this.setState({ occupation: index });
           }}
-            />
-          <br/>
-          <p>Transportation</p><Select 
-          id="transportation-options" 
+        />
+        <br />
+        <p>Transportation</p>
+        <Select
+          id="transportation-options"
           options={optionNames(transportationOptions)}
           onChange={(index: number) => {
-            this.setState({transportation:index});
+            this.setState({ transportation: index });
           }}
-            />
-          <br/>
+        />
+        <br />
 
         <p>Income: {occupation.income}</p>
         <p>Transportation: {transportation.cost}</p>
-        <br/>
-          <Button
-            className=""
-            buttonType={ButtonType.hero}
-            iconProps={{ iconName: "ChevronRight" }}
-            onClick={this.click}
-          >
-            Run
-          </Button>
+        <br />
+        <Button className="" buttonType={ButtonType.hero} iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
+          Run
+        </Button>
       </div>
     );
   }
