@@ -6,6 +6,7 @@ import Progress from "./Progress";
 import Select from "./Select";
 import getTransportationOptions from "../data/getTransportationOptions";
 import getOccupationOptions from "../data/getOccupationOptions";
+import writeOptionSheet from "../excel/writeOptionSheet";
 
 export interface AppProps {
   title: string;
@@ -70,19 +71,29 @@ export default class App extends React.Component<AppProps, AppState> {
   click = async () => {
     try {
       await Excel.run(async context => {
-        /**
-         * Insert your Excel code here
-         */
-        const range = context.workbook.getSelectedRange();
+        writeOptionSheet(
+          context,
+          "test",
+          ["number", "name", "letter"],
+          [
+            [1, "one", "A"],
+            [2, "two", "B"],
+            [3, "three", "C"]
+          ]
+        );
+        // /**
+        //  * Insert your Excel code here
+        //  */
+        // const range = context.workbook.getSelectedRange();
 
-        // Read the range address
-        range.load("address");
+        // // Read the range address
+        // range.load("address");
 
-        // Update the fill color
-        range.format.fill.color = "yellow";
+        // // Update the fill color
+        // range.format.fill.color = "yellow";
 
-        await context.sync();
-        console.log(`The range address was ${range.address}.`);
+        // await context.sync();
+        // console.log(`The range address was ${range.address}.`);
       });
     } catch (error) {
       console.error(error);
@@ -114,7 +125,13 @@ export default class App extends React.Component<AppProps, AppState> {
     // <Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" /><Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" />
     return (
       <div>
-        <p>Occupation</p>
+        <h1>Simulate Your Life</h1>
+        <Button className="" buttonType={ButtonType.hero} iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
+          Run
+        </Button>
+        <br />
+
+        <span>Occupation</span>
         <Select
           id="occupation-options"
           options={optionNames(occupationOptions)}
@@ -123,7 +140,7 @@ export default class App extends React.Component<AppProps, AppState> {
           }}
         />
         <br />
-        <p>Transportation</p>
+        <span>Transportation</span>
         <Select
           id="transportation-options"
           options={optionNames(transportationOptions)}
@@ -135,10 +152,14 @@ export default class App extends React.Component<AppProps, AppState> {
 
         <p>Income: {occupation.income}</p>
         <p>Transportation: {transportation.cost}</p>
+        <p>Housing: 10000</p>
+        <p>Healthcare: 5000</p>
+        <p>Food: 4000</p>
+        <p>Clothing: 600</p>
+        <p>Phone: 500 to 1000</p>
+        <p>Entertainment: ?</p>
+        <p>Remaining: ?</p>
         <br />
-        <Button className="" buttonType={ButtonType.hero} iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
-          Run
-        </Button>
       </div>
     );
   }
