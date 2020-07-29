@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Button, ButtonType } from "office-ui-fabric-react";
-import Header from "./Header";
-import List, { ListItem } from "./List";
+//import Header from "./Header";
+//import List, { ListItem } from "./List";
 import Progress from "./Progress";
 import Select from "./Select";
+import getTransportationOptions from "../data/getTransportationOptions";
+import getOccupationOptions from "../data/getOccupationOptions";
 
 export interface AppProps {
   title: string;
@@ -12,58 +14,56 @@ export interface AppProps {
 
 // All state must be stored as part of the global state of the application
 export interface AppState {
-  listItems: ListItem[];
+  //listItems: ListItem[];
 
   /**
-   * Yearly Job Income
+   * Occupation
    */
-  income: number;
+  occupation: number;
+
+  /**
+   * Transportation
+   */
+  transportation: number;
 }
 
-interface Occupation {
-  /**
-   * name of the occupation
-   */
-  name:string;
+// Can be populated later
+const occupationOptions = getOccupationOptions();
 
-  /**
-   * Yearly Income
-   */
-  income:number;
+const transportationOptions = getTransportationOptions();
+
+function optionNames(options: {name: string}[]) {
+  return options.map(({name}) => name);
 }
-
-const occupations: Occupation[] =[
-  {name:"None", income: 0}
-  {name:"Low", income:20000},
-  {name:"Medium", income:60000},
-  {name:"High", income:100000},
-]
 
 export default class App extends React.Component<AppProps, AppState> {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      listItems: [],
-      income: 0,
+      //listItems: [],
+      occupation: 0,
+      transportation: 0,
     };
   }
 
   componentDidMount() {
     this.setState({
-      listItems: [
-        {
-          icon: "Ribbon",
-          primaryText: "Achieve more with Office integration"
-        },
-        {
-          icon: "Unlock",
-          primaryText: "Unlock features and functionality"
-        },
-        {
-          icon: "Design",
-          primaryText: "Create and visualize like a pro"
-        }
-      ]
+      occupation: 0,
+      transportation: 0,
+      // listItems: [
+      //   {
+      //     icon: "Ribbon",
+      //     primaryText: "Achieve more with Office integration"
+      //   },
+      //   {
+      //     icon: "Unlock",
+      //     primaryText: "Unlock features and functionality"
+      //   },
+      //   {
+      //     icon: "Design",
+      //     primaryText: "Create and visualize like a pro"
+      //   }
+      // ]
     });
   }
 
@@ -89,6 +89,12 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   };
 
+  // modifyState(update: AppState){
+  //   // const combined = {...this.state, ...update};
+  //   // this.setState(combined);
+  //   this.setState(update);
+  // }
+
   render() {
     const { title, isOfficeInitialized } = this.props;
 
@@ -98,23 +104,38 @@ export default class App extends React.Component<AppProps, AppState> {
       );
     }
 
+    const occupation = occupationOptions[this.state.occupation];
+    const transportation = transportationOptions[this.state.transportation];
+
+    console.log(occupation);
+    console.log(transportation)
+
+
+    // <List message="Excel Life - Explore your options!" items={this.state.listItems}>
+    // <Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" /><Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" />
     return (
       <div>
-        <Header logo="assets/icon-300.png" title={this.props.title} message="Welcome" />
-        <List message="Excel Life - Explore your options!" items={this.state.listItems}>
-          <p>
-            Modify the source files, then click <b>Run</b>.
-          </p>
-          <h2>Occupation Income</h2>
-          <Select id="test" options={
-            occupations.map(({name}) => name)
-          }
+        
+          <p>Occupation</p>
+          <Select 
+          id="occupation-options" 
+          options={optionNames(occupationOptions)}
           onChange={(index: number) => {
-            this.setState({income:occupations[index].income});
+            this.setState({occupation:index});
           }}
             />
           <br/>
-        <p>{this.state.income}</p>
+          <p>Transportation</p><Select 
+          id="transportation-options" 
+          options={optionNames(transportationOptions)}
+          onChange={(index: number) => {
+            this.setState({transportation:index});
+          }}
+            />
+          <br/>
+
+        <p>Income: {occupation.income}</p>
+        <p>Transportation: {transportation.cost}</p>
         <br/>
           <Button
             className=""
@@ -124,7 +145,6 @@ export default class App extends React.Component<AppProps, AppState> {
           >
             Run
           </Button>
-        </List>
       </div>
     );
   }
