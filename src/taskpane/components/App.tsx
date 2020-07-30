@@ -6,9 +6,9 @@ import Progress from "./Progress";
 import Select from "./Select";
 import getTransportationOptions from "../data/getTransportationOptions";
 import getOccupationOptions from "../data/getOccupationOptions";
-import writeOptionSheet from "../excel/writeOptionSheet";
 import getHousingOptions from "../data/getHousingOptions";
 import getTaxForIncome from "../data/getTaxForIncome";
+import run from "../excel/run";
 
 export interface AppProps {
   title: string;
@@ -74,41 +74,11 @@ export default class App extends React.Component<AppProps, AppState> {
 
   click = async () => {
     try {
-      await Excel.run(async context => {
-        writeOptionSheet(
-          context,
-          "test",
-          ["number", "name", "letter"],
-          [
-            [1, "one", "A"],
-            [2, "two", "B"],
-            [3, "three", "C"]
-          ]
-        );
-        // /**
-        //  * Insert your Excel code here
-        //  */
-        // const range = context.workbook.getSelectedRange();
-
-        // // Read the range address
-        // range.load("address");
-
-        // // Update the fill color
-        // range.format.fill.color = "yellow";
-
-        // await context.sync();
-        // console.log(`The range address was ${range.address}.`);
-      });
+      await run();
     } catch (error) {
       console.error(error);
     }
   };
-
-  // modifyState(update: AppState){
-  //   // const combined = {...this.state, ...update};
-  //   // this.setState(combined);
-  //   this.setState(update);
-  // }
 
   render() {
     const { title, isOfficeInitialized } = this.props;
@@ -119,7 +89,7 @@ export default class App extends React.Component<AppProps, AppState> {
       );
     }
 
-    // Expenses
+    // Income
 
     const occupation = {
       category: "Occupation",
@@ -127,6 +97,8 @@ export default class App extends React.Component<AppProps, AppState> {
     };
 
     const totalIncome = occupation.income;
+
+    // Expenses
 
     const transportation: Expense = {
       category: "Transportation",
@@ -177,11 +149,10 @@ export default class App extends React.Component<AppProps, AppState> {
         : "You are in debt! Find a higher paying job or cut expenses."
     };
 
-    // <List message="Excel Life - Explore your options!" items={this.state.listItems}>
-    // <Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" /><Header logo="assets/icon-300.png" title={this.props.title} message="Excel Life" />
     return (
       <div>
         <h1>Simulate Your Life</h1>
+        <h1>Explore Your Choices</h1>
         <Button className="" buttonType={ButtonType.hero} iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
           Run
         </Button>
