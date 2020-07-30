@@ -8,6 +8,12 @@ https://github.com/wandyezj/wandyezj.github.io/blob/master/writing/low-cost-livi
 
 The idea is to show people what lifestyle options are available and the reality of how those lifestyle choices are constrained by their choice of occupation.
 
+## Design
+
+Write each set of options to a table in a different sheet where it can be modified.
+
+Write helper tips to help calculate all costs
+
 ## Data Sources
 
 United States Bureau of Labor Statistics
@@ -19,6 +25,11 @@ hourly and annual 10th, 25th, 75th, and 90th percentile wages for occupations.
 https://www.bls.gov/oes/current/oes_nat.htm
 
 
+Tax Brackets
+
+The calculation is pretty confusing
+
+https://www.debt.org/tax/brackets/
 
 
 ## Debugging

@@ -19,3 +19,11 @@ select {
     margin-left: 5px;
     padding: 3px;
 }
+
+.invest {
+    color: green;
+}
+
+.debt {
+    color: red;
+}

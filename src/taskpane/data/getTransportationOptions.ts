@@ -2,20 +2,20 @@ import TransportationOption from "./TransportationOption";
 
 const transportation: TransportationOption[] = [
   {
-    name: "walk",
-    cost: 0
-  },
-  {
-    name: "bike",
-    cost: 100
+    name: "car",
+    cost: 5000
   },
   {
     name: "bus",
     cost: 2000
   },
   {
-    name: "car",
-    cost: 5000
+    name: "bike",
+    cost: 100
+  },
+  {
+    name: "walk",
+    cost: 0
   }
 ];
 
