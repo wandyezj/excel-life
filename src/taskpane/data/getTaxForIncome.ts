@@ -43,15 +43,24 @@ const taxBrackets: {
 ];
 
 export default function getTaxForIncome(income: number) {
+  const socialSecurityPercentage = 0.062;
+  const medicarePercentage = 0.0145;
+
+  const socialSecurityTax = income * socialSecurityPercentage;
+  const medicareTax = income * medicarePercentage;
+  
+  const standardDeduction = 12200;
+  const taxableIncome = income > standardDeduction ? income - standardDeduction : 0; 
+
   const taxPerBracket = taxBrackets.map(({ above, below, rate }) => {
     const percent = rate / 100.0;
 
-    if (income > above) {
+    if (taxableIncome > above) {
       let taxableAtRate = 0;
-      if (income > below) {
+      if (taxableIncome > below) {
         taxableAtRate = below - above;
       } else {
-        taxableAtRate = income - above;
+        taxableAtRate = taxableIncome - above;
       }
 
       const taxAtRate = taxableAtRate * percent;
@@ -63,7 +72,10 @@ export default function getTaxForIncome(income: number) {
   });
 
   // sum all tax per bracket
-
-  const totalTax = taxPerBracket.reduce((previous, current) => previous + current, 0);
+  const totalBracketTax = taxPerBracket.reduce((previous, current) => previous + current, 0);
+  
+  // All Taxes
+  
+  const totalTax = totalBracketTax + socialSecurityTax + medicareTax;
   return Math.floor(totalTax);
 }
