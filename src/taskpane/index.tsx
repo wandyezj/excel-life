@@ -1,10 +1,8 @@
-
 import App from "./components/App";
 import { AppContainer } from "react-hot-loader";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
 
 let isOfficeInitialized = false;
 

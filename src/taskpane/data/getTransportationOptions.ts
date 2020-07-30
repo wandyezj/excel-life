@@ -4,22 +4,22 @@ const transportation: ExpenseOption[] = [
   {
     name: "car",
     description: "an ok car",
-    cost: 5000,
+    cost: 5000
   },
   {
     name: "bus",
     description: "ride the bus",
-    cost: 2000,
+    cost: 2000
   },
   {
     name: "bike",
     description: "bike maintenance, biking helps you get exercise",
-    cost: 100,
+    cost: 100
   },
   {
     name: "walk",
     description: "walk, helps you get exercise",
-    cost: 0,
+    cost: 0
   }
 ];
 

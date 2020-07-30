@@ -11,6 +11,7 @@ import run from "../excel/run";
 import writeOptionSheet from "../excel/writeOptionSheet";
 import OccupationOptionProperties from "../data/OccupationOptionProperties";
 import ExpenseOptionProperties from "../data/ExpenseOptionProperties";
+import writeOptions from "../excel/writeOptions";
 
 export interface AppProps {
   title: string;
@@ -34,23 +35,20 @@ function optionNames(options: { name: string }[]) {
   return options.map(({ name }) => name);
 }
 
-
-
 export default class App extends React.Component<AppProps, AppState> {
-
   private categories = {
     occupation: {
       properties: OccupationOptionProperties,
-      options: getOccupationOptions(),
+      options: getOccupationOptions()
     },
     housing: {
       properties: ExpenseOptionProperties,
-      options: getHousingOptions(),
+      options: getHousingOptions()
     },
     transportation: {
       properties: ExpenseOptionProperties,
-      options: getTransportationOptions(),
-    },
+      options: getTransportationOptions()
+    }
   };
 
   constructor(props, context) {
@@ -79,32 +77,11 @@ export default class App extends React.Component<AppProps, AppState> {
   };
 
   // need to disable changes while loading
-  clickReadOptions = async () => {
-
-  }
+  clickReadOptions = async () => {};
 
   clickWriteOptions = async () => {
-    await Excel.run(async (context) => {
-
-      const categoryNames = Object.getOwnPropertyNames(this.categories)
-      for (let categoryName of categoryNames) {
-        console.log(categoryName);
-        const category:
-         {properties: string[], options: any[]} =
-         this.categories[categoryName];
-
-        const properties= category.properties;
-        const rows = category.options.map(
-          item => properties.map(
-          property => item[property]));
-
-        // convert object to rows
-        writeOptionSheet(context,categoryName,properties, rows);
-        await context.sync();
-      }
-
-    });
-  }
+    writeOptions(this.categories);
+  };
 
   render() {
     const { title, isOfficeInitialized } = this.props;
