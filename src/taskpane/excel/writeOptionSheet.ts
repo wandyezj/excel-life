@@ -46,6 +46,8 @@ export default function writeOptionSheet(
   // Add Rows
   console.log("add rows");
   table.rows.add(undefined, rows);
+
+  table.getRange().format.autofitColumns();
   // rows.forEach((row) => {
 
   // })

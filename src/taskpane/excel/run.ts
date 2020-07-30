@@ -1,17 +1,26 @@
 import writeOptionSheet from "./writeOptionSheet";
+import readOptionSheet from "./readOptionSheet";
 
 export default async function run() {
 await Excel.run(async context => {
+
+    const name = "test";
+    const header = ["number", "name", "letter"];
     writeOptionSheet(
       context,
-      "test",
-      ["number", "name", "letter"],
+      name,
+      header,
       [
         [1, "one", "A"],
         [2, "two", "B"],
         [3, "three", "C"]
       ]
     );
+
+    const data = await readOptionSheet(context, name, ["letter", "number"]);
+    console.log("new data");
+    console.log(data);
+
     // /**
     //  * Insert your Excel code here
     //  */

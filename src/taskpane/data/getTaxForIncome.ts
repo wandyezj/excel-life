@@ -43,6 +43,10 @@ const taxBrackets: {
 ];
 
 export default function getTaxForIncome(income: number) {
+  if (income <=0) {
+    return 0;
+  }
+
   const socialSecurityPercentage = 0.062;
   const medicarePercentage = 0.0145;
 

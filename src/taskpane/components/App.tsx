@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Button, ButtonType } from "office-ui-fabric-react";
 //import Header from "./Header";
 import List from "./List";
 import Progress from "./Progress";
@@ -9,6 +8,9 @@ import getOccupationOptions from "../data/getOccupationOptions";
 import getHousingOptions from "../data/getHousingOptions";
 import getTaxForIncome from "../data/getTaxForIncome";
 import run from "../excel/run";
+import writeOptionSheet from "../excel/writeOptionSheet";
+import OccupationOptionProperties from "../data/OccupationOptionProperties";
+import ExpenseOptionProperties from "../data/ExpenseOptionProperties";
 
 export interface AppProps {
   title: string;
@@ -32,18 +34,28 @@ function optionNames(options: { name: string }[]) {
   return options.map(({ name }) => name);
 }
 
+
+
 export default class App extends React.Component<AppProps, AppState> {
-  // Can be populated later
-  private occupationOptions = getOccupationOptions();
 
-  private transportationOptions = getTransportationOptions();
-
-  private housingOptions = getHousingOptions();
+  private categories = {
+    occupation: {
+      properties: OccupationOptionProperties,
+      options: getOccupationOptions(),
+    },
+    housing: {
+      properties: ExpenseOptionProperties,
+      options: getHousingOptions(),
+    },
+    transportation: {
+      properties: ExpenseOptionProperties,
+      options: getTransportationOptions(),
+    },
+  };
 
   constructor(props, context) {
     super(props, context);
     this.state = {
-      //listItems: [],
       occupation: 0,
       transportation: 0,
       housing: 0
@@ -55,20 +67,6 @@ export default class App extends React.Component<AppProps, AppState> {
       occupation: 0,
       transportation: 0,
       housing: 0
-      // listItems: [
-      //   {
-      //     icon: "Ribbon",
-      //     primaryText: "Achieve more with Office integration"
-      //   },
-      //   {
-      //     icon: "Unlock",
-      //     primaryText: "Unlock features and functionality"
-      //   },
-      //   {
-      //     icon: "Design",
-      //     primaryText: "Create and visualize like a pro"
-      //   }
-      // ]
     });
   }
 
@@ -79,6 +77,34 @@ export default class App extends React.Component<AppProps, AppState> {
       console.error(error);
     }
   };
+
+  // need to disable changes while loading
+  clickReadOptions = async () => {
+
+  }
+
+  clickWriteOptions = async () => {
+    await Excel.run(async (context) => {
+
+      const categoryNames = Object.getOwnPropertyNames(this.categories)
+      for (let categoryName of categoryNames) {
+        console.log(categoryName);
+        const category:
+         {properties: string[], options: any[]} =
+         this.categories[categoryName];
+
+        const properties= category.properties;
+        const rows = category.options.map(
+          item => properties.map(
+          property => item[property]));
+
+        // convert object to rows
+        writeOptionSheet(context,categoryName,properties, rows);
+        await context.sync();
+      }
+
+    });
+  }
 
   render() {
     const { title, isOfficeInitialized } = this.props;
@@ -93,7 +119,7 @@ export default class App extends React.Component<AppProps, AppState> {
 
     const occupation = {
       category: "Occupation",
-      ...this.occupationOptions[this.state.occupation]
+      ...this.categories.occupation.options[this.state.occupation]
     };
 
     const totalIncome = occupation.income;
@@ -102,12 +128,12 @@ export default class App extends React.Component<AppProps, AppState> {
 
     const transportation: Expense = {
       category: "Transportation",
-      ...this.transportationOptions[this.state.transportation]
+      ...this.categories.transportation.options[this.state.transportation]
     };
 
     const housing: Expense = {
       category: "Housing",
-      ...this.housingOptions[this.state.housing]
+      ...this.categories.housing.options[this.state.housing]
     };
 
     const healthcare: Expense = {
@@ -153,16 +179,15 @@ export default class App extends React.Component<AppProps, AppState> {
       <div>
         <h1>Simulate Your Life</h1>
         <h5>Explore Your Choices</h5>
-        <Button className="" buttonType={ButtonType.hero} iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
-          Run
-        </Button>
-        <br />
+        <button onClick={this.click}>Test</button>
+        <button onClick={this.clickWriteOptions}>Write Options</button>
+        <button onClick={this.clickReadOptions}>Read Options</button>
 
         <h4>Lifestyle</h4>
         <span>Occupation</span>
         <Select
           id="occupation-options"
-          options={optionNames(this.occupationOptions)}
+          options={optionNames(this.categories.occupation.options)}
           onChange={(index: number) => {
             this.setState({ occupation: index });
           }}
@@ -171,7 +196,7 @@ export default class App extends React.Component<AppProps, AppState> {
         <span>Transportation</span>
         <Select
           id="transportation-options"
-          options={optionNames(this.transportationOptions)}
+          options={optionNames(this.categories.transportation.options)}
           onChange={(index: number) => {
             this.setState({ transportation: index });
           }}
@@ -180,7 +205,7 @@ export default class App extends React.Component<AppProps, AppState> {
         <span>Housing</span>
         <Select
           id="housing-options"
-          options={optionNames(this.housingOptions)}
+          options={optionNames(this.categories.housing.options)}
           onChange={(index: number) => {
             this.setState({ housing: index });
           }}

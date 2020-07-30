@@ -1,25 +1,29 @@
-import TransportationOption from "./TransportationOption";
+import ExpenseOption from "./ExpenseOption";
 
-const transportation: TransportationOption[] = [
+const transportation: ExpenseOption[] = [
   {
     name: "car",
-    cost: 5000
+    description: "an ok car",
+    cost: 5000,
   },
   {
     name: "bus",
-    cost: 2000
+    description: "ride the bus",
+    cost: 2000,
   },
   {
     name: "bike",
-    cost: 100
+    description: "bike maintenance, biking helps you get exercise",
+    cost: 100,
   },
   {
     name: "walk",
-    cost: 0
+    description: "walk, helps you get exercise",
+    cost: 0,
   }
 ];
 
-export default function getTransportationOptions(): TransportationOption[] {
+export default function getTransportationOptions(): ExpenseOption[] {
   // TODO: be retrieved from an excel spreadsheet
   return transportation;
 }
