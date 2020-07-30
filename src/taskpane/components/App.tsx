@@ -8,10 +8,10 @@ import getOccupationOptions from "../data/getOccupationOptions";
 import getHousingOptions from "../data/getHousingOptions";
 import getTaxForIncome from "../data/getTaxForIncome";
 import run from "../excel/run";
-import writeOptionSheet from "../excel/writeOptionSheet";
 import OccupationOptionProperties from "../data/OccupationOptionProperties";
 import ExpenseOptionProperties from "../data/ExpenseOptionProperties";
 import writeOptions from "../excel/writeOptions";
+import readOptionSheet from "../excel/readOptionSheet";
 
 export interface AppProps {
   title: string;
@@ -76,8 +76,36 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   };
 
-  // need to disable changes while loading
-  clickReadOptions = async () => {};
+  // TODO: disable changes while loading
+  // lock input in sheets, lock input in UI
+  clickReadOptions = async () => {
+    await Excel.run(async context => {
+      const categoryNames = Object.getOwnPropertyNames(this.categories);
+      for (let categoryName of categoryNames) {
+        const category = this.categories[categoryName];
+        const { properties } = category;
+
+        // map options to table rows
+        const dataRows = await readOptionSheet(context, categoryName, properties);
+
+        // build objects
+        const newOptions = dataRows.map(row =>
+          row
+            .map((value, index) => {
+              const key = properties[index];
+              return {
+                [key]: value
+              };
+            })
+            .reduce((previous, current) => {
+              return { ...previous, ...current };
+            }, {})
+        );
+
+        console.log(newOptions);
+      }
+    });
+  };
 
   clickWriteOptions = async () => {
     writeOptions(this.categories);

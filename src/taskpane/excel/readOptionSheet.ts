@@ -26,9 +26,9 @@ export default async function readOptionSheet(
 
   const header = headerRaw[0];
 
-  console.log(columnTitles);
-  console.log(header);
-  console.log(data);
+  // console.log(columnTitles);
+  // console.log(header);
+  // console.log(data);
 
   const titleIndices = columnTitles.map(title => header.indexOf(title));
 
