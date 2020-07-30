@@ -152,7 +152,7 @@ export default class App extends React.Component<AppProps, AppState> {
     return (
       <div>
         <h1>Simulate Your Life</h1>
-        <h1>Explore Your Choices</h1>
+        <h5>Explore Your Choices</h5>
         <Button className="" buttonType={ButtonType.hero} iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
           Run
         </Button>
@@ -186,10 +186,10 @@ export default class App extends React.Component<AppProps, AppState> {
           }}
         />
 
-        <h4>Income</h4>
+        <h4>Income (Yearly)</h4>
         <p>Total Income: ${totalIncome}</p>
 
-        <h4>Expenses</h4>
+        <h4>Expenses (Yearly)</h4>
         <List
           items={expenses.map(({ category, cost }) => {
             return { text: `${category}: \$${cost}` };
@@ -197,7 +197,7 @@ export default class App extends React.Component<AppProps, AppState> {
         />
         <p>Total Expenses: ${totalExpenses}</p>
 
-        <h4>Summary</h4>
+        <h4>Summary (yearly)</h4>
         <p>
           <span className={finalMessage.spanClass}>{finalMessage.title}</span> ${finalMessage.amount}
         </p>
