@@ -4,10 +4,28 @@ import ExpenseOption from "./ExpenseOption";
 
 const housing: ExpenseOption[] = [
   {
-    name: "apartment",
-    cost: 12000,
+    name: "apartment 1200 per month",
+    cost: 1200 * 12,
     description:
-      "an apartment, costs are highly variable depending on location. Check housing prices in the area you want to live. Living with roommates may reduce this cost."
+      "an apartment 1200 per month (including utilities), costs are highly variable depending on location. Check housing prices in the area you want to live. Living with roommates may reduce this cost."
+  },
+  {
+    name: "apartment 1000 per month",
+    cost: 1000 * 12,
+    description:
+      "an apartment 1000 per month (including utilities)"
+  },
+  {
+    name: "apartment 800 per month",
+    cost: 800 * 12,
+    description:
+      "an apartment 800 per month (including utilities)"
+  },
+  {
+    name: "apartment 600 per month",
+    cost: 600 * 12,
+    description:
+      "an apartment 600 per month (including utilities"
   },
   {
     name: "mooch",

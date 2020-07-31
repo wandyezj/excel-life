@@ -12,8 +12,9 @@ import OccupationOptionProperties from "../data/OccupationOptionProperties";
 import ExpenseOptionProperties from "../data/ExpenseOptionProperties";
 import writeOptions from "../excel/writeOptions";
 import readOptions from "../excel/readOptions";
-import recreateSheet from "../excel/recreateSheet";
 import chartExpenses from "../excel/chartExpenses";
+import getPhoneOptions from "../data/getPhoneOptions";
+import getHealthcareOptions from "../data/getHealthcareOptions";
 
 export interface AppProps {
   title: string;
@@ -26,6 +27,8 @@ export interface AppState {
   occupation: number;
   transportation: number;
   housing: number;
+  phone: number;
+  healthcare: number;
   //categories:any;
 }
 
@@ -51,6 +54,14 @@ export default class App extends React.Component<AppProps, AppState> {
     transportation: {
       properties: ExpenseOptionProperties,
       options: getTransportationOptions()
+    },
+    phone: {
+      properties: ExpenseOptionProperties,
+      options: getPhoneOptions()
+    },
+    healthcare: {
+      properties: ExpenseOptionProperties,
+      options: getHealthcareOptions()
     }
   };
 
@@ -59,7 +70,9 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = {
       occupation: 0,
       transportation: 0,
-      housing: 0
+      housing: 0,
+      phone: 0,
+      healthcare: 0,
     };
   }
 
@@ -67,7 +80,8 @@ export default class App extends React.Component<AppProps, AppState> {
     this.setState({
       occupation: 0,
       transportation: 0,
-      housing: 0
+      housing: 0,
+      phone: 0,
     });
   }
 
@@ -102,20 +116,17 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   };
 
-
-
   clickBudget = async () => {
     //const income = this.getIncome()
     const expenses = this.getControllableExpenses();
     try {
-        await chartExpenses(expenses);
+      await chartExpenses(expenses);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   getControllableExpenses() {
-    
     const transportation: Expense = {
       category: "Transportation",
       ...this.categories.transportation.options[this.state.transportation]
@@ -128,12 +139,12 @@ export default class App extends React.Component<AppProps, AppState> {
 
     const healthcare: Expense = {
       category: "Healthcare",
-      cost: 5000
+      ...this.categories.healthcare.options[this.state.healthcare]
     };
 
     const phone: Expense = {
       category: "Phone",
-      cost: 1000
+      ...this.categories.phone.options[this.state.phone]
     };
     const clothing: Expense = {
       category: "Clothing",
@@ -144,15 +155,16 @@ export default class App extends React.Component<AppProps, AppState> {
       cost: 4000
     };
 
+    const entertainment = {
+      category: "Entertainment",
+      cost: 0
+    };
 
-    // Entertainment
-
-    const expenses = [transportation, housing, phone, clothing, healthcare, food];
-    return expenses
+    const expenses = [transportation, housing, phone, clothing, healthcare, food, entertainment];
+    return expenses;
   }
 
   getExpenses(totalIncome: number) {
-
     const taxes = {
       category: "Tax (estimate)",
       cost: getTaxForIncome(totalIncome)
@@ -161,20 +173,16 @@ export default class App extends React.Component<AppProps, AppState> {
     // Entertainment
 
     const expenses = [...this.getControllableExpenses(), taxes];
-    return expenses
+    return expenses;
   }
 
-
-
   getIncome() {
-
     const occupation = {
       category: "Occupation",
       ...this.categories.occupation.options[this.state.occupation]
     };
 
     return occupation.income;
-
   }
 
   render() {
@@ -239,6 +247,24 @@ export default class App extends React.Component<AppProps, AppState> {
           options={optionNames(this.categories.housing.options)}
           onChange={(index: number) => {
             this.setState({ housing: index });
+          }}
+        />
+        <br />
+        <span>Phone</span>
+        <Select
+          id="phone-options"
+          options={optionNames(this.categories.phone.options)}
+          onChange={(index: number) => {
+            this.setState({ phone: index });
+          }}
+        />
+        <br />
+        <span>Healthcare</span>
+        <Select
+          id="healthcare-options"
+          options={optionNames(this.categories.healthcare.options)}
+          onChange={(index: number) => {
+            this.setState({ healthcare: index });
           }}
         />
 
