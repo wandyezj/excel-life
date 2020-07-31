@@ -11,7 +11,8 @@ import run from "../excel/run";
 import OccupationOptionProperties from "../data/OccupationOptionProperties";
 import ExpenseOptionProperties from "../data/ExpenseOptionProperties";
 import writeOptions from "../excel/writeOptions";
-import readOptionSheet from "../excel/readOptionSheet";
+import readOptions from "../excel/readOptions";
+import recreateSheet from "../excel/recreateSheet";
 
 export interface AppProps {
   title: string;
@@ -80,55 +81,15 @@ export default class App extends React.Component<AppProps, AppState> {
   // TODO: disable changes while loading
   // lock input in sheets, lock input in UI
   clickReadOptions = async () => {
-    //const newCategories =
-    await Excel.run(async context => {
-      //const newCategories = {};
-
-      const categoryNames = Object.getOwnPropertyNames(this.categories);
-      for (let categoryName of categoryNames) {
-        console.log(categoryName);
-        const category: { properties: { names: string[] }; options: any[] } = this.categories[categoryName];
-        const { properties } = category;
-        const propertyNames = properties.names;
-
-        // map options to table rows
-        const dataRows = await readOptionSheet(context, categoryName, propertyNames);
-
-        // build objects
-        const newOptions = dataRows.map(row =>
-          row
-            .map((value, index) => {
-              const key = propertyNames[index];
-              return {
-                [key]: value
-              };
-            })
-            .reduce((previous, current) => {
-              return { ...previous, ...current };
-            }, {})
-        );
-
-        // set new options
-        // this.setState({
-        //   categories: {
-        //     [categoryName]: {
-        //       options: newOptions
-        //     }
-        //   }
-        // });
-        this.categories[categoryName].options = newOptions;
-
-        //   newCategories[categoryName] = {
-        //     properties: this.state[categoryName].properties,
-        //     options: newOptions
-        //   }
-        //   console.log(newOptions);
-        // }
-
-        // return newCategories;
-      }
-    });
+    try {
+      await readOptions(this.categories);
+    } catch (error) {
+      console.error(error);
+    }
     console.log(this.categories);
+    // Requires Force Update of the UI until figure out how to update a state with a complex object
+    // TODO: figure out how to update existing indices on the state since the data has changed
+
     this.forceUpdate();
   };
 
@@ -140,26 +101,93 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   };
 
-  render() {
-    const { title, isOfficeInitialized } = this.props;
 
-    if (!isOfficeInitialized) {
-      return (
-        <Progress title={title} logo="assets/icon-300.png" message="Please sideload your addin to see app body." />
-      );
+
+  clickBudget = async () => {
+    //const income = this.getIncome()
+    const expenses = this.getControllableExpenses();
+    try {
+      await Excel.run(async(context)=> {
+        //const book = context.workbook;
+        const sheet = recreateSheet(context, "budget");
+        sheet.activate();
+
+        // write range with expense data
+        const expenseRowHeader = ["Expense Category", "Cost"];
+        const expenseRows = 
+        [
+          expenseRowHeader,
+          ...expenses.map(({category, cost}) => [category, cost])
+        ]
+        const expenseRange = sheet.getRangeByIndexes(0,0, expenseRows.length, expenseRowHeader.length);
+        expenseRange.values = expenseRows;
+        expenseRange.format.autofitColumns();
+
+        const table = sheet.tables.add(expenseRange, true);
+        //table.sort.apply
+        //table.showFilterButton = true;
+
+        const sortFields = [
+          {
+            key: 1,
+            ascending: false
+          }
+        ];
+
+        table.sort.apply(sortFields);
+
+        const chart = sheet.charts.add(Excel.ChartType.treemap, expenseRange, Excel.ChartSeriesBy.columns);
+        chart.name = "Controllable Expenses"; // can't control taxes
+        //chart.seriesNameLevel
+        // /? can't set a charts title? - oh its a buried property
+        chart.title.text = "Controllable Expenses";
+
+        // Size
+        chart.width = 650;
+        chart.height = 400;
+
+
+        const series = chart.series.getItemAt(0);
+        // Documentation does not specify valid value range
+        //series.doughnutHoleSize = 60;
+
+        const seriesDataLabels = series.dataLabels;
+        //seriesDataLabels.separator = "\n";
+        seriesDataLabels.showValue = true;
+        //seriesDataLabels.
+        seriesDataLabels.showCategoryName = true;
+        //seriesDataLabels.showPercentage = true;
+        //seriesDataLabels.separator = "\n"
+
+        
+        const legend = chart.legend;
+        //legend.position =Excel.ChartLegendPosition.invalid
+        legend.visible = false;
+        //legend.position = Excel.ChartLegendPosition.left;
+        //legend.format.font.size = 14;
+
+        const dataLabels = chart.dataLabels;
+        //dataLabels.separator = " "; //weird interaction with hierarchy
+        dataLabels.showCategoryName = true;
+        dataLabels.showValue = true;
+        // dataLabels.separator = "\n";
+        //dataLabels.showSeriesName = true; //"cost"
+        // dataLabels.showBubbleSize = true; // ?
+        
+        
+        //dataLabels.showPercentage = true;
+
+        const dataLabelsFont = dataLabels.format.font;
+        dataLabelsFont.color = "white"
+        dataLabelsFont.size = 16;
+      });
+    } catch (error) {
+      console.error(error);
     }
+  }
 
-    // Income
-
-    const occupation = {
-      category: "Occupation",
-      ...this.categories.occupation.options[this.state.occupation]
-    };
-
-    const totalIncome = occupation.income;
-
-    // Expenses
-
+  getControllableExpenses() {
+    
     const transportation: Expense = {
       category: "Transportation",
       ...this.categories.transportation.options[this.state.transportation]
@@ -177,7 +205,7 @@ export default class App extends React.Component<AppProps, AppState> {
 
     const phone: Expense = {
       category: "Phone",
-      cost: 500
+      cost: 1000
     };
     const clothing: Expense = {
       category: "Clothing",
@@ -188,12 +216,53 @@ export default class App extends React.Component<AppProps, AppState> {
       cost: 4000
     };
 
+
+    // Entertainment
+
+    const expenses = [transportation, housing, phone, clothing, healthcare, food];
+    return expenses
+  }
+
+  getExpenses(totalIncome: number) {
+
     const taxes = {
       category: "Tax (estimate)",
       cost: getTaxForIncome(totalIncome)
     };
 
-    const expenses = [transportation, housing, phone, clothing, healthcare, food, taxes];
+    // Entertainment
+
+    const expenses = [...this.getControllableExpenses(), taxes];
+    return expenses
+  }
+
+
+
+  getIncome() {
+
+    const occupation = {
+      category: "Occupation",
+      ...this.categories.occupation.options[this.state.occupation]
+    };
+
+    return occupation.income;
+
+  }
+
+  render() {
+    const { title, isOfficeInitialized } = this.props;
+
+    if (!isOfficeInitialized) {
+      return (
+        <Progress title={title} logo="assets/icon-300.png" message="Please sideload your addin to see app body." />
+      );
+    }
+
+    // Income
+    const totalIncome = this.getIncome();
+
+    // Expenses
+    const expenses = this.getExpenses(totalIncome);
 
     const totalExpenses = expenses.reduce((previous, current) => previous + current.cost, 0);
 
@@ -213,7 +282,7 @@ export default class App extends React.Component<AppProps, AppState> {
       <div>
         <h1>Simulate Your Life</h1>
         <h5>Explore Your Choices</h5>
-        <button onClick={this.click}>Test</button>
+        <button onClick={this.clickBudget}>Budget</button>
         <button onClick={this.clickWriteOptions}>Write Options</button>
         <button onClick={this.clickReadOptions}>Read Options</button>
 
@@ -261,14 +330,6 @@ export default class App extends React.Component<AppProps, AppState> {
           <span className={finalMessage.spanClass}>{finalMessage.title}</span> ${finalMessage.amount}
         </p>
         <p>{finalMessage.message}</p>
-        {/* <p>Transportation: {transportation.cost}</p>
-        <p>Housing: {housing.cost}</p>
-        <p>Healthcare: {healthcare.cost}</p>
-        <p>Food: 4000</p>
-        <p>Clothing: 600</p>
-        <p>Phone: 500 to 1000</p>
-        <p>Entertainment: ?</p>
-        <p>Remaining: ?</p> */}
         <br />
       </div>
     );
