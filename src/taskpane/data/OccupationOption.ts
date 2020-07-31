@@ -8,4 +8,9 @@ export default interface OccupationOption {
    * Yearly Income USD (positive number)
    */
   income: number;
+
+  /**
+   * description of the Job
+   */
+  description: string;
 }

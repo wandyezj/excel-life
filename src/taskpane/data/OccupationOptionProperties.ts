@@ -1,7 +1,8 @@
 export default {
-  names: ["name", "income"],
+  names: ["name", "income", "description"],
   types: {
     name: "string",
-    income: "number"
+    income: "number",
+    description: "string"
   }
 };

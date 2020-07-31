@@ -72,7 +72,7 @@ export default class App extends React.Component<AppProps, AppState> {
       transportation: 0,
       housing: 0,
       phone: 0,
-      healthcare: 0,
+      healthcare: 0
     };
   }
 
@@ -81,7 +81,7 @@ export default class App extends React.Component<AppProps, AppState> {
       occupation: 0,
       transportation: 0,
       housing: 0,
-      phone: 0,
+      phone: 0
     });
   }
 

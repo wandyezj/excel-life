@@ -31,6 +31,23 @@ The calculation is pretty confusing
 
 https://www.debt.org/tax/brackets/
 
+## Showing Asset Growth for investment
+
+Sources of Asset Growth
+
+- savings
+- growth on investment
+
+to keep it simple assume straight investment in sp500 which has averaged 8% growth per year
+
+definitions
+
+yearly investment - the money that is newly invested each year from outside the investment
+principle - the money that is invested
+
+
+
+
 
 ## Debugging
 

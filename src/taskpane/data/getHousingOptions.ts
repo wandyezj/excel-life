@@ -12,20 +12,17 @@ const housing: ExpenseOption[] = [
   {
     name: "apartment 1000 per month",
     cost: 1000 * 12,
-    description:
-      "an apartment 1000 per month (including utilities)"
+    description: "an apartment 1000 per month (including utilities)"
   },
   {
     name: "apartment 800 per month",
     cost: 800 * 12,
-    description:
-      "an apartment 800 per month (including utilities)"
+    description: "an apartment 800 per month (including utilities)"
   },
   {
     name: "apartment 600 per month",
     cost: 600 * 12,
-    description:
-      "an apartment 600 per month (including utilities"
+    description: "an apartment 600 per month (including utilities"
   },
   {
     name: "mooch",
