@@ -30,8 +30,8 @@ export default function writeOptionSheet(
   const values = [columnTitles];
   //columnTitles.map(value => [value]);
 
-  console.log(address);
-  console.log(values);
+  // console.log(address);
+  // console.log(values);
 
   const range = sheet.getRange(address);
 
@@ -44,7 +44,7 @@ export default function writeOptionSheet(
   table.name = name;
 
   // Add Rows
-  console.log("add rows");
+  //console.log("add rows");
   table.rows.add(undefined, rows);
 
   table.getRange().format.autofitColumns();

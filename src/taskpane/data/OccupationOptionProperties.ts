@@ -1,1 +1,7 @@
-export default ["name", "income"];
+export default {
+  names: ["name", "income"],
+  types: {
+    name: "string",
+    income: "number"
+  }
+};

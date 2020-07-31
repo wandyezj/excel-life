@@ -24,6 +24,7 @@ export interface AppState {
   occupation: number;
   transportation: number;
   housing: number;
+  //categories:any;
 }
 
 interface Expense {
@@ -79,20 +80,25 @@ export default class App extends React.Component<AppProps, AppState> {
   // TODO: disable changes while loading
   // lock input in sheets, lock input in UI
   clickReadOptions = async () => {
+    //const newCategories =
     await Excel.run(async context => {
+      //const newCategories = {};
+
       const categoryNames = Object.getOwnPropertyNames(this.categories);
       for (let categoryName of categoryNames) {
-        const category = this.categories[categoryName];
+        console.log(categoryName);
+        const category: { properties: { names: string[] }; options: any[] } = this.categories[categoryName];
         const { properties } = category;
+        const propertyNames = properties.names;
 
         // map options to table rows
-        const dataRows = await readOptionSheet(context, categoryName, properties);
+        const dataRows = await readOptionSheet(context, categoryName, propertyNames);
 
         // build objects
         const newOptions = dataRows.map(row =>
           row
             .map((value, index) => {
-              const key = properties[index];
+              const key = propertyNames[index];
               return {
                 [key]: value
               };
@@ -102,13 +108,36 @@ export default class App extends React.Component<AppProps, AppState> {
             }, {})
         );
 
-        console.log(newOptions);
+        // set new options
+        // this.setState({
+        //   categories: {
+        //     [categoryName]: {
+        //       options: newOptions
+        //     }
+        //   }
+        // });
+        this.categories[categoryName].options = newOptions;
+
+        //   newCategories[categoryName] = {
+        //     properties: this.state[categoryName].properties,
+        //     options: newOptions
+        //   }
+        //   console.log(newOptions);
+        // }
+
+        // return newCategories;
       }
     });
+    console.log(this.categories);
+    this.forceUpdate();
   };
 
   clickWriteOptions = async () => {
-    writeOptions(this.categories);
+    try {
+      await writeOptions(this.categories);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   render() {

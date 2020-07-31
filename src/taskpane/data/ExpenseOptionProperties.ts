@@ -1,4 +1,11 @@
 /**
  * Expense Option Properties
  */
-export default ["name", "cost", "description"];
+export default {
+  names: ["name", "cost", "description"],
+  types: {
+    name: "string",
+    cost: "number",
+    description: "string"
+  }
+};
