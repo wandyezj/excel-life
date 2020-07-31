@@ -25,6 +25,11 @@ const housing: ExpenseOption[] = [
     description: "an apartment 600 per month (including utilities"
   },
   {
+    name: "apartment 500 per month",
+    cost: 500 * 12,
+    description: "an apartment 500 per month (including utilities"
+  },
+  {
     name: "mooch",
     cost: 0,
     description: "live with parents, friends, etc.. who don't mind you living at their place for free"

@@ -4,7 +4,12 @@ const healthcare: ExpenseOption[] = [
     name: "Healthcare.gov (estimate)",
     description:
       "healthcare.gov insurance estimate is highly variable depending on area, lifestyle choices, desired coverage, and individual health",
-    cost: 350 * 12
+    cost: 300 * 12
+  },
+  {
+    name: "Employer (estimate)",
+    description: "Your employer pays for your healthcare, have to check with your employer",
+    cost: 1000
   },
   {
     name: "none",

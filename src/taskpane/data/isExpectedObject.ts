@@ -13,7 +13,7 @@ function validOption(
   const propertyNames = Object.getOwnPropertyNames(o);
 
   for (let propertyName of propertyNames) {
-    const propertyExpected = validator.properties.includes(propertyName);
+    const propertyExpected = validator.names.includes(propertyName);
     if (!propertyExpected) {
       // property is not in the allowed list
       return false;

@@ -15,6 +15,7 @@ import readOptions from "../excel/readOptions";
 import chartExpenses from "../excel/chartExpenses";
 import getPhoneOptions from "../data/getPhoneOptions";
 import getHealthcareOptions from "../data/getHealthcareOptions";
+import getFoodOptions from "../data/getFoodOptions";
 
 export interface AppProps {
   title: string;
@@ -29,7 +30,7 @@ export interface AppState {
   housing: number;
   phone: number;
   healthcare: number;
-  //categories:any;
+  food: number;
 }
 
 interface Expense {
@@ -62,6 +63,10 @@ export default class App extends React.Component<AppProps, AppState> {
     healthcare: {
       properties: ExpenseOptionProperties,
       options: getHealthcareOptions()
+    },
+    food: {
+      properties: ExpenseOptionProperties,
+      options: getFoodOptions()
     }
   };
 
@@ -72,7 +77,8 @@ export default class App extends React.Component<AppProps, AppState> {
       transportation: 0,
       housing: 0,
       phone: 0,
-      healthcare: 0
+      healthcare: 0,
+      food: 0,
     };
   }
 
@@ -81,7 +87,8 @@ export default class App extends React.Component<AppProps, AppState> {
       occupation: 0,
       transportation: 0,
       housing: 0,
-      phone: 0
+      phone: 0,
+      food:0,
     });
   }
 
@@ -152,7 +159,7 @@ export default class App extends React.Component<AppProps, AppState> {
     };
     const food = {
       category: "Food",
-      cost: 4000
+      ...this.categories.food.options[this.state.food]
     };
 
     const entertainment = {
@@ -211,7 +218,7 @@ export default class App extends React.Component<AppProps, AppState> {
       amount: inGreen ? totalRemaining : totalRemaining * -1,
       message: inGreen
         ? "Good Job! You can invest in your future."
-        : "You are in debt! Find a higher paying job or cut expenses."
+        : "You are in debt! Find a higher paying job, cut expenses, or work more hours."
     };
 
     return (
@@ -265,6 +272,15 @@ export default class App extends React.Component<AppProps, AppState> {
           options={optionNames(this.categories.healthcare.options)}
           onChange={(index: number) => {
             this.setState({ healthcare: index });
+          }}
+        />
+        <br />
+        <span>Food</span>
+        <Select
+          id="food-options"
+          options={optionNames(this.categories.food.options)}
+          onChange={(index: number) => {
+            this.setState({ food: index });
           }}
         />
 
