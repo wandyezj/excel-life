@@ -1,5 +1,4 @@
 import * as React from "react";
-//import Header from "./Header";
 import List from "./List";
 import Progress from "./Progress";
 import Select from "./Select";
@@ -16,6 +15,7 @@ import chartExpenses from "../excel/chartExpenses";
 import getPhoneOptions from "../data/getPhoneOptions";
 import getHealthcareOptions from "../data/getHealthcareOptions";
 import getFoodOptions from "../data/getFoodOptions";
+import chartInvestment from "../excel/chartInvestment";
 
 export interface AppProps {
   title: string;
@@ -133,6 +133,15 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   };
 
+  clickInvest = async () => {
+    const investable = this.getTotalInvestable();
+    try {
+      await chartInvestment(investable);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   getControllableExpenses() {
     const transportation: Expense = {
       category: "Transportation",
@@ -183,6 +192,22 @@ export default class App extends React.Component<AppProps, AppState> {
     return expenses;
   }
 
+  getTotalExpenses(expenses: {cost:number}[]) {
+    const totalExpenses = expenses.reduce((previous, current) => previous + current.cost, 0);
+    return totalExpenses;
+  }
+
+  getTotalInvestable() {
+    const totalIncome = this.getIncome();
+    const totalExpenses = this.getTotalExpenses(this.getExpenses(totalIncome));
+    const difference = totalIncome - totalExpenses;
+    if (difference < 0) {
+      return 0;
+    }
+    return difference;
+  }
+
+
   getIncome() {
     const occupation = {
       category: "Occupation",
@@ -207,7 +232,7 @@ export default class App extends React.Component<AppProps, AppState> {
     // Expenses
     const expenses = this.getExpenses(totalIncome);
 
-    const totalExpenses = expenses.reduce((previous, current) => previous + current.cost, 0);
+    const totalExpenses = this.getTotalExpenses(expenses);
 
     const totalRemaining = totalIncome - totalExpenses;
 
@@ -226,6 +251,7 @@ export default class App extends React.Component<AppProps, AppState> {
         <h1>Simulate Your Life</h1>
         <h5>Explore Your Choices</h5>
         <button onClick={this.clickBudget}>Budget</button>
+        <button onClick={this.clickInvest}>Invest</button>
         <button onClick={this.clickWriteOptions}>Write Options</button>
         <button onClick={this.clickReadOptions}>Read Options</button>
 
